@@ -10,12 +10,20 @@ from api.images import Images
 
 
 def get_all_images():
+    """
+    :return: all images on system
+    """
+
     query_images = Images.query.order_by(desc(Images.id)).all()
     images = [element.serialize() for element in query_images]
     return {'images': images}, 200
 
 
 def get_image(named):
+    """
+    Recibe one image name and return the path and nam
+    """
+
     image = Images.query.filter_by(name=named).first()
     if image:
         return {'image': image.serialize()}, 200
@@ -28,6 +36,9 @@ def get_image(named):
 
 
 def set_image(request):
+    """
+    Upload or change one image
+    """
     
     valid_request(request)
 

@@ -3,7 +3,7 @@ from api.app import db
 
 class Images(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80))
+    name = db.Column(db.String(80)) # TODO create a unique index
     path = db.Column(db.String(1024))
 
     def serialize(self):
