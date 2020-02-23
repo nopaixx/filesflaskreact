@@ -36,7 +36,7 @@ def set_image(request):
 
     filename = get_secure_name(file.filename, name)
     
-    saveFile(file, filename)
+    save_file(file, filename)
 
     path = generate_path(filename)
     
@@ -52,7 +52,7 @@ def set_image(request):
     return {'image': image.serialize(),
             'status': STATUS}, 201
 
-
+# util function
 
 
 def save_file(file, filename):
@@ -119,6 +119,7 @@ def valid_request(request):
     if not valid_file(request):
         raise RuntimeError('invalid file')
 
+
 def allowed_file(filename):
     """
     Allowed extension
@@ -128,6 +129,7 @@ def allowed_file(filename):
 
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+
 
 def valid_file(request):
     """

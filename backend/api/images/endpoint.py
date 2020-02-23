@@ -13,6 +13,10 @@ from api.images.middelware import get_image
 from api.images.middelware import set_image
 
 
+# GET /images --> lista de images
+# POST /images --> sube la image
+# GET /image/name --> devuelve una image
+
 class ImageIndex(Resource):
 
     def get(self):
