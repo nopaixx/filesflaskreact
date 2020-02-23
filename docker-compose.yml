@@ -1,0 +1,31 @@
+version: '3.5'
+services:
+ frontend:
+  build: ./frontend/.
+  ports:
+   - "3000:3000"
+  depends_on:
+   - backend
+
+ backend:
+  build: ./backend/.
+  command: ["/app/apiserver"]
+
+  ports:
+   - "8081:8081"
+  environment:
+   - PORT=8081
+   - FLASK_APP=api
+   - FLASK_DEBUG=true
+  depends_on:
+   - postgres
+
+ postgres:
+    image: postgres
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+        - POSTGRES_USER=demo
+        - POSTGRES_PASSWORD=demo
+        - POSTGRES_DB=demo
