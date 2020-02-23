@@ -18,6 +18,11 @@ ReactDOM.render(
 			<Route exact path="/">
 				<App />
 			</Route>
+			<Route
+				exact
+				path="/image/:name"
+				render={props => <ViewImage {...props} />}
+			/>
 			<Route path="/image/:name">
 				<ViewImage />
 			</Route>
@@ -30,3 +35,6 @@ ReactDOM.render(
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
+//<Route path="/image/:name">
+//				<ViewImage />
+//			</Route>

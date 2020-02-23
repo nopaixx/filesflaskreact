@@ -17,13 +17,12 @@ class ViewImage extends React.Component {
 		super(props);
 		this.getImage = this.getImage.bind(this);
 		this.state = { image: { src: "", title: "" } };
-		console.log(this.props);
-		//		const { name } = useParams();
-		//		this.getImage(name);
+		const name = this.props.match.params.name;
+		this.getImage(name);
 	}
 	getImage(name) {
-		axios.get(`http://localhost:8081/images/${name}`).then(
-			response => {
+		axios.get(`http://localhost:8081/images/${name}`)
+			.then(response => {
 				console.log(response);
 				if (response.status === 200) {
 					this.setState({
@@ -41,8 +40,19 @@ class ViewImage extends React.Component {
 				} else {
 					// something wrong...
 				}
-			}
-		);
+			})
+			.catch(error => {
+				this.setState({
+					image: {
+						src:
+							error.response.data
+								.image.path,
+						title:
+							error.response.data
+								.image.name
+					}
+				});
+			});
 	}
 	render() {
 		return (

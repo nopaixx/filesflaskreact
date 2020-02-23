@@ -47,7 +47,7 @@ class App extends React.Component {
 	onClickHandle(e) {
 		if (this.state.selectedName === "") {
 			this.setState({
-				selectedMessage: "please select name"
+				selectedMessage: "please select one name"
 			});
 			return;
 		} else if (this.state.selectedFile === "") {
@@ -63,13 +63,11 @@ class App extends React.Component {
 			res => {
 				if (res.data.status === "CREATED") {
 					this.setState({
-						selectedMessage:
-							"NEW IMAGE UPLOAD OK"
+						selectedMessage: `${this.state.selectedName} image uploaded`
 					});
 				} else if (res.data.status === "UPDATED") {
 					this.setState({
-						selectedMessage:
-							"IMAGE UPDATED OK"
+						selectedMessage: `${this.state.selectedName} image changed`
 					});
 				} else {
 				}
