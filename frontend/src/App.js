@@ -59,8 +59,8 @@ class App extends React.Component {
 		const data = new FormData();
 		data.append("name", this.state.selectedName);
 		data.append("file", this.state.selectedFile);
-		axios.post("http://localhost:8081/images", data, {}).then(
-			res => {
+		axios.post("http://localhost:8081/images", data, {})
+			.then(res => {
 				if (res.data.status === "CREATED") {
 					this.setState({
 						selectedMessage: `${this.state.selectedName} image uploaded`
@@ -70,11 +70,16 @@ class App extends React.Component {
 						selectedMessage: `${this.state.selectedName} image changed`
 					});
 				} else {
+					//something wrong!
 				}
 
 				this.getAll();
-			}
-		);
+			})
+			.catch(error => {
+				this.setState({
+					selectedMessage: error.response.data
+				});
+			});
 	}
 	onChangeName(e) {
 		this.setState({
@@ -110,7 +115,6 @@ class App extends React.Component {
 					/>
 					<button
 						type="button"
-						className="btn btn-success btn-block"
 						onClick={this.onClickHandle}
 					>
 						Upload
@@ -119,7 +123,14 @@ class App extends React.Component {
 						(element, idx) => {
 							return (
 								<div key={idx}>
-									<Row>
+									<Row
+										style={{
+											display:
+												"inline-flex",
+											alignItems:
+												"center"
+										}}
+									>
 										<Col>
 											<img
 												src={

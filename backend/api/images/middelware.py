@@ -16,15 +16,15 @@ def get_all_images():
 
 
 def get_image(named):
-    try:
-        image = Images.query.filter_by(name=named).first()
-        if image:
-            return {'image': image.serialize()}
-        else:
-            return 'NOT_FOUND', 404
-    except Exception as e:
-        print(str(e), file=sys.stderr)
-
+    image = Images.query.filter_by(name=named).first()
+    if image:
+        return {'image': image.serialize()}, 200
+    else:
+        return {'image': {
+                        'path': app.config['NOT_FOUND_IMAGE'],
+                        'name': 'NOT_FOUND'
+                         }
+               }, 404
 
 
 def set_image(request):
@@ -36,14 +36,10 @@ def set_image(request):
 
     filename = get_secure_name(file.filename, name)
     
-    # first() is equivalent to limit and only once with this name
-    # first we save the image if something faile we don't update the date base
-    file.save(os.path.join(app.config['STATIC_FOLDER'], filename))
+    saveFile(file, filename)
 
-    path = "{}/{}/{}".format(app.config['SERVER_NAME_URI'], 
-                             app.config['STATIC_PATH'],
-                             filename)
-
+    path = generate_path(filename)
+    
     image = Images.query.filter_by(name=name).first()
 
     if image:
@@ -57,7 +53,49 @@ def set_image(request):
             'status': STATUS}, 201
 
 
+
+
+def save_file(file, filename):
+    """
+    Recibe a binary file and name and save into static folder
+
+    :file: binary File
+    :filaname: destination name
+
+    :return: return true if succesfull false otherwise
+
+    TODO: improve system write ok etc... raise excpetion..
+    """
+    file.save(os.path.join(app.config['STATIC_FOLDER'], filename))
+    return True
+
+
+def generate_path(filename):
+    """
+    Given a input filename we return a path with the static server URL
+
+    :filename: File name destination
+
+    :return: return a full url
+
+    """
+
+    path = "{}/{}/{}".format(app.config['SERVER_NAME_URI'],
+                             app.config['STATIC_PATH'],
+                             filename)
+    return path
+
 def get_secure_name(filename, name):
+    """
+    With this function we are sure we not override other file
+    and we sanitize the input
+
+    :filename: original filename destination
+    :name: this is the frontend taged name
+
+    :return: sanitized name with timestamp
+
+    """
     filename = filename.split('.')
     filename = '{}-{}-{}.{}'.format("".join(item for item in filename[:-1]), 
                                     name,
@@ -67,7 +105,10 @@ def get_secure_name(filename, name):
 
 
 def valid_request(request):
-    
+    """
+    this function validate our request with mandatory fields
+
+    """
     if app.config['VIRUS_SCAN']:
         if not virus_scan(request):
             raise RuntimeError('virus detected!')
@@ -79,22 +120,19 @@ def valid_request(request):
         raise RuntimeError('invalid file')
 
 def allowed_file(filename):
+    """
+    Allowed extension
+
+    :return: True if allowed filename
+    """
+
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
-def virus_scan(request):
-    # TODO 3-party app to check for virus in binary file
-    pass
-
-def valid_name(request):
-    # TODO add you validation for the name, for example
-    # length>0 <80 
-    # escape caracters etc...
-
-    return True
-
 def valid_file(request):
-
+    """
+    For the request we need a file we check if is valid
+    """
     if 'file' not in request.files:
         return False
 
@@ -107,3 +145,17 @@ def valid_file(request):
         return False
 
     return True
+
+
+def virus_scan(request):
+    # TODO 3-party app to check for virus in binary file
+    pass
+
+def valid_name(request):
+    # TODO add you validation for the name, for example
+    # length>0 <80
+    # escape caracters etc...
+
+    return True
+
+
